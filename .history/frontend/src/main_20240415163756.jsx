@@ -32,7 +32,7 @@ import PlaceOrder from "./pages/Orders/PlaceOrder.jsx";
 import Order from "./pages/Orders/Order.jsx";
 import UserOrder from "./pages/User/UserOrder.jsx";
 import OrderList from "./pages/Admin/OrderList.jsx";
-import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -51,6 +51,7 @@ const router = createBrowserRouter(
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/placeorder" element={<PlaceOrder />} />
         <Route path="/order/:id" element={<Order />} />
+
       </Route>
 
       <Route path="/admin" element={<AdminRoute />}>
@@ -61,7 +62,7 @@ const router = createBrowserRouter(
         <Route path="allproductslist" element={<AllProducts />} />
         <Route path="product/update/:_id" element={<ProductUpdate />} />
         <Route path="orderlist" element={<OrderList />} />
-        <Route path="dashboard" element={<AdminDashboard />} />
+
       </Route>
     </Route>
   )
@@ -69,7 +70,7 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     {/* <PayPalScriptProvider> */}
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
     {/* </PayPalScriptProvider> */}
   </Provider>
 );

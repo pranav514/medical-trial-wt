@@ -73,9 +73,11 @@ app.use("/api/orders", orderRoutes);
 app.get("/api/config/paypal", (req, res) => {
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID });
 });
+
 app.get("/",(req,res) => {
   res.send("hello to the backend ")
 })
+
 // Initialize Firebase Storage
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyCLRiFyQ-src7MaqhsqVD3BZFDcR6YwfYI",
