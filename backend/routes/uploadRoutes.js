@@ -1,50 +1,58 @@
-import path from "path";
-import express from "express";
+
+
+import express, { Router } from "express";
+import { initializeApp } from "firebase/app";
+import { getStorage, ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import multer from "multer";
+import config from "../config/firebaseconfig.js"
 
-const router = express.Router();
+const router= express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
+//Initialize a firebase application
+initializeApp(config.firebaseConfig);
 
-  filename: (req, file, cb) => {
-    const extname = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${Date.now()}${extname}`);
-  },
-});
+// Initialize Cloud Storage and get a reference to the service
+const storage = getStorage();
 
-const fileFilter = (req, file, cb) => {
-  const filetypes = /jpe?g|png|webp/;
-  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+// Setting up multer as a middleware to grab photo uploads
+const upload = multer({ storage: multer.memoryStorage() });
 
-  const extname = path.extname(file.originalname).toLowerCase();
-  const mimetype = file.mimetype;
+router.post("/", upload.single("image"), async (req, res) => {
+    try {
+        const dateTime = giveCurrentDateTime();
 
-  if (filetypes.test(extname) && mimetypes.test(mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Images only"), false);
-  }
-};
+        const storageRef = ref(storage, `files/${req.file.originalname + "       " + dateTime}`);
 
-const upload = multer({ storage, fileFilter });
-const uploadSingleImage = upload.single("image");
+        // Create file metadata including the content type
+        const metadata = {
+            contentType: req.file.mimetype,
+        };
 
-router.post("/", (req, res) => {
-  uploadSingleImage(req, res, (err) => {
-    if (err) {
-      res.status(400).send({ message: err.message });
-    } else if (req.file) {
-      res.status(200).send({
-        message: "Image uploaded successfully",
-        image: `/${req.file.path}`,
-      });
-    } else {
-      res.status(400).send({ message: "No image file provided" });
+        // Upload the file in the bucket storage
+        const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+        //by using uploadBytesResumable we can control the progress of uploading like pause, resume, cancel
+
+        // Grab the public url
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        console.log('File successfully uploaded.');
+        return res.send({
+            message: 'file uploaded to firebase storage',
+            name: req.file.originalname,
+            type: req.file.mimetype,
+            image: downloadURL
+        })
+    } catch (error) {
+        return res.status(400).send(error.message)
     }
-  });
 });
+
+const giveCurrentDateTime = () => {
+    const today = new Date();
+    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    const dateTime = date + ' ' + time;
+    return dateTime;
+}
 
 export default router;
