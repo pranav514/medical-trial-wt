@@ -46,9 +46,7 @@ app.get("/",(req,res) => {
   res.set('Access-Control-Allow-Credentials', 'true');
   res.send("hello to the backend ")
 })
-app.post("/",(req,res) => {
-  res.set('Access-Control-Allow-Credentials','true')
-})
+
 
 // Initialize Firebase Storage
 const firebaseApp = initializeApp({
@@ -62,17 +60,17 @@ const firebaseApp = initializeApp({
 
 const storage = getStorage(firebaseApp);
 
-// app.use("/uploads", async (req, res, next) => {
-//   try {
-//     const filename = req.url.substring(1); // Remove leading '/'
-//     const fileRef = ref(storage, filename);
-//     const image = await getDownloadURL(fileRef);
-//     res.redirect(image);
-//   } catch (error) {
-//     console.error("Error serving file:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
+app.use("/uploads", async (req, res, next) => {
+  try {
+    const filename = req.url.substring(1); // Remove leading '/'
+    const fileRef = ref(storage, filename);
+    const image = await getDownloadURL(fileRef);
+    res.redirect(image);
+  } catch (error) {
+    console.error("Error serving file:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 // app.use("/api", async (req, res, next) => {
 //   try {
