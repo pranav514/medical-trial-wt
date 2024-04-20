@@ -46,6 +46,9 @@ app.get("/",(req,res) => {
   res.set('Access-Control-Allow-Credentials', 'true');
   res.send("hello to the backend ")
 })
+app.post("/",(req,res) => {
+  res.set('Access-Control-Allow-Credentials','true')
+})
 
 // Initialize Firebase Storage
 const firebaseApp = initializeApp({
