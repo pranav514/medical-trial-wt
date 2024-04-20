@@ -59,29 +59,29 @@ const firebaseApp = initializeApp({
 
 const storage = getStorage(firebaseApp);
 
-// app.use("/uploads", async (req, res, next) => {
-//   try {
-//     const filename = req.url.substring(1); // Remove leading '/'
-//     const fileRef = ref(storage, filename);
-//     const image = await getDownloadURL(fileRef);
-//     res.redirect(image);
-//   } catch (error) {
-//     console.error("Error serving file:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
+app.use("/uploads", async (req, res, next) => {
+  try {
+    const filename = req.url.substring(1); // Remove leading '/'
+    const fileRef = ref(storage, filename);
+    const image = await getDownloadURL(fileRef);
+    res.redirect(image);
+  } catch (error) {
+    console.error("Error serving file:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
-// app.use("/api", async (req, res, next) => {
-//   try {
-//     // Forward the request to the Render server
-//     const response = await fetch(`https://medical-trial-wt.onrender.com`);
-//     const data = await response.json();
-//     res.send(data);
-//   } catch (error) {
-//     console.error("Error forwarding request:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// })
+app.use("/api", async (req, res, next) => {
+  try {
+    // Forward the request to the Render server
+    const response = await fetch(`https://medical-trial-wt.onrender.com`);
+    const data = await response.json();
+    res.send(data);
+  } catch (error) {
+    console.error("Error forwarding request:", error);
+    res.status(500).send("Internal Server Error");
+  }
+})
 
 // const __dirname = path.resolve();
 // app.use("/uploads", express.static(path.join(__dirname + "/uploads")));
